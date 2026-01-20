@@ -9,6 +9,9 @@
 [![DuckDB](https://img.shields.io/badge/DB%20Engine-DuckDB-075e81?style=for-the-badge&logo=data-ingestion)](https://duckdb.org/)
 [![PyArrow](https://img.shields.io/badge/Format-PyArrow%2FParquet-e36611?style=for-the-badge&logo=apache-arrow)](https://arrow.apache.org/)
 
+<img width="1536" height="1024" alt="ChatGPT Image 20 de jan  de 2026, 11_12_57" src="https://github.com/user-attachments/assets/1bef46b4-bfe4-4204-bdf5-4c608753354d" />
+
+
 ---
 
 ## I. 💡 Introdução Estratégica: O Conceito de Table Stream Query Engine
