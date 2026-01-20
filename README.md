@@ -27,6 +27,47 @@ O resultado é a capacidade de executar **consultas OLAP complexas (Analytical Q
 
 **Caso de Uso Central (PoC):** Monitoramento de *Freezers* em Supermercados. O sistema garante que qualquer analista possa consultar o status de Alerta, a Média de Temperatura e o Total de Sensores por Filial em **tempo real** usando apenas SQL via API.
 
+graph TD
+    subgraph Data Producer 💉
+        A[🌡️ Injector (Simulador)] -- POST /ingest (JSON/Multi-Formato) --> B
+        A -- Stack --> A_T(✨ Python, Faker, requests)
+    end
+
+    subgraph Data Engine/Store ⚙️ (TSQE)
+        direction LR
+        B[API Gateway (FastAPI) 🚀] -- Acesso Tokenizado (JWT) --> C{Query Processor}
+        C -- Arrow Table (Roxo/Ciano) --> D(🧠 DuckDB Core)
+        D -- OLAP: SELECT, GROUP BY, JSON_EXTRACT (Ouro) --> E{Estado Atual da Realidade}
+        E -- Columnar Storage (Ouro) --> D
+        C -- FAST JSON Output --> F[API Gateway (FastAPI) 🚀]
+        
+        style B fill:#5A3EBE,stroke:#C29CF5,stroke-width:2px,color:#FFFFFF
+        style F fill:#5A3EBE,stroke:#C29CF5,stroke-width:2px,color:#FFFFFF
+        style C fill:#C29CF5,stroke:#5A3EBE,stroke-width:2px,color:#FFFFFF
+        style D fill:#FFD700,stroke:#B8860B,stroke-width:2px,color:#333333
+        style E fill:#FFFFE0,stroke:#FFD700,stroke-width:2px,color:#333333
+
+        subgraph Core Components
+            D_T1[🎯 DuckDB: OLAP Power]
+            D_T2[⬆️ PyArrow: Data Interop]
+        end
+    end
+
+    subgraph Data Consumer 📊
+        F -- POST /query (SQL) --> G[Dashboard Collector (FastAPI)]
+        G -- In-App Aggregation (Python/Pandas-like) --> H(📈 Real-Time KPIs & Logic)
+        H -- Render (HTML/JS) --> I[🖥️ Browser/Monitor]
+        G -- Stack --> G_T(✨ Python, HTML, JS)
+    end
+    
+    A --> B
+    F --> G
+    
+    linkStyle 0 stroke-width:3px,stroke:#C29CF5,color:#333;
+    linkStyle 1 stroke-width:3px,stroke:#C29CF5,color:#333;
+    linkStyle 2 stroke-width:3px,stroke:#FFD700,color:#333;
+    linkStyle 3 stroke-width:3px,stroke:#FFD700,color:#333;
+    
 ---
 
 ## II. 🏛️ Arquitetura *Decoupled* e *Lean* em Microsserviços
