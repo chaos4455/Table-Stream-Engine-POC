@@ -2,133 +2,136 @@
 
 ## Por Elias Andrade | Next-Gen System & Data Architect
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Elias%20Andrade-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/itilmgf/)
-[![GitHub](https://img.shields.io/badge/GitHub-chaos4455-181717?style=for-the-badge&logo=github)](https://github.com/chaos4455)
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/Framework-FastAPI-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![DuckDB](https://img.shields.io/badge/DB%20Engine-DuckDB-075e81?style=for-the-badge&logo=data-ingestion)](https://duckdb.org/)
-[![PyArrow](https://img.shields.io/badge/Format-PyArrow%2FParquet-e36611?style=for-the-badge&logo=apache-arrow)](https://arrow.apache.org/)
+[![LinkedIn Badge](https://img.shields.io/badge/LinkedIn-Elias%20Andrade-0077B5?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0077B5)](https://www.linkedin.com/in/itilmgf/)
+[![GitHub Badge](https://img.shields.io/badge/GitHub-chaos4455-181717?style=for-the-badge&logo=github&logoColor=white&labelColor=181717)](https://github.com/chaos4455)
+[![Python Version](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI Framework](https://img.shields.io/badge/Framework-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![DuckDB Core](https://img.shields.io/badge/DB%20Engine-DuckDB%20(OLAP)-FFD700?style=for-the-badge&logo=data-ingestion&logoColor=333333&labelColor=B8860B)](https://duckdb.org/)
+[![PyArrow Format](https://img.shields.io/badge/Format%20Interop-PyArrow%2FParquet-C29CF5?style=for-the-badge&logo=apache-arrow&logoColor=FFFFFF&labelColor=5A3EBE)](https://arrow.apache.org/)
+[![Architecture Type](https://img.shields.io/badge/Architecture-Decoupled%20Microservices-5A3EBE?style=for-the-badge&logo=microservices&logoColor=white)](https://www.fastapi.tiangolo.com/)
 
-<img width="1536" height="1024" alt="ChatGPT Image 20 de jan  de 2026, 11_12_57" src="https://github.com/user-attachments/assets/1bef46b4-bfe4-4204-bdf5-4c608753354d" />
+<br>
 
-
----
-
-## I. 💡 Introdução Estratégica: O Conceito de Table Stream Query Engine
-
-Esta Prova de Conceito (PoC) demonstra a construção de uma arquitetura de dados *Lean* e desacoplada, utilizando microsserviços customizados para resolver o desafio clássico de transformar **streams de dados de alta velocidade** em **insights em tempo real**, com latência ultrabaixa, sem a complexidade operacional de Data Lakes massivos ou clusters Kafka genéricos para casos de uso específicos.
-
-### O que é o TSQE?
-
-O **Table Stream Query Engine (TSQE)** é um motor de processamento híbrido que trata dados de streaming como uma tabela permanentemente materializada e instantaneamente consultável. Em vez de simplesmente enfileirar eventos (como o Kafka), ou armazenar em disco (como bancos de dados tradicionais), o TSQE **mantém o estado atual da realidade** em memória, permitindo consultas OLAP (Online Analytical Processing) complexas sobre o estado *atualizado* do sistema com latência de milissegundos.
-
-**Caso de Uso Prático (Esta PoC):** Monitoramento de sensores de temperatura em supermercados. A cada 10 segundos, o estado de centenas de freezers é atualizado (UPSERT), permitindo que um Dashboard Analítico consulte o status de toda a rede usando SQL puro, em tempo real.
+<p align="center">
+    <img src="placeholder_image_arquitetura.png" alt="Diagrama de Arquitetura TSQE" width="90%">
+    <br>
+    <i>Representação Visual da Arquitetura TSQE: Ingestão (Azul/Roxo) ➡️ Processamento (Ouro/Amarelo) ➡️ Consumo (Verde/Ciano)</i>
+</p>
 
 ---
 
-## II. 🏛️ Arquitetura de Microsserviços Desacoplados (Decoupled Architecture)
+## I. 💡 Introdução Estratégica: O Paradigma *State-as-a-Table*
 
-A solução é dividida em três microsserviços independentes, comunicando-se exclusivamente via APIs e formatos de dados padronizados (JSON, PyArrow). Este modelo garante escalabilidade, resiliência e a capacidade de trocar componentes sem afetar o sistema principal (Engine).
+Esta Prova de Conceito (PoC) transcende a simples demonstração de código. Ela estabelece um **novo paradigma de arquitetura de dados**: o **Table Stream Query Engine (TSQE)**, focado em resolver o desafio de latência analítica em tempo real com máxima eficiência.
 
-| Camada | Componente | Tecnologia Principal | Função Primária |
-| :--- | :--- | :--- | :--- |
-| **Data Producer** | 💉 **Data Injector (Simulador)** | Python, `requests`, `faker` | Simula um grande volume de sensores (Upserts). |
-| **Data Engine/Store** | ⚙️ **TSQE (Engine Principal)** | FastAPI, DuckDB, PyArrow | Ingestão multi-formato, Armazenamento in-memory e Execução de Query SQL. |
-| **Data Consumer** | 📊 **Dashboard & Metrics Collector** | FastAPI, HTML/JS, `requests` | Consulta a Engine, calcula KPIs em tempo real e renderiza a visualização Web. |
+### O que é o TSQE e por que ele é Next-Gen?
 
-### Comunicação Assíncrona e Sincronizada
+Enquanto sistemas legados (como o Kafka) são otimizados para o *fluxo de eventos* (o que aconteceu), o TSQE é otimizado para o **estado da realidade** (qual é o status **agora**). Ele trata o fluxo contínuo de dados de alta velocidade (e.g., 400 sensores a cada 10s) como uma **tabela analítica materializada em memória** que está sujeita a **UPSERTs** (Update-or-Insert) ultrarrápidos.
 
-1. **Injector ➡️ TSQE:** Usa chamadas **POST `/ingest`** para realizar `UPSERTs` (Insert/Update) de forma transacional no estado da tabela em tempo real.
-2. **Dashboard ➡️ TSQE:** Usa chamadas **POST `/query`** enviando consultas SQL complexas. A Engine retorna o resultado em um formato otimizado (JSON serializado por PyArrow) em menos de 100ms.
+O resultado é a capacidade de executar **consultas OLAP complexas (Analytical Queries)** sobre o *estado atual* do sistema, atingindo a meta de **latência analítica zero** – uma exigência crítica para sistemas de monitoramento industrial, financeiro e de varejo.
+
+**Caso de Uso Central (PoC):** Monitoramento de *Freezers* em Supermercados. O sistema garante que qualquer analista possa consultar o status de Alerta, a Média de Temperatura e o Total de Sensores por Filial em **tempo real** usando apenas SQL via API.
 
 ---
 
-## III. 🧠 O Coração da Engine: DuckDB e PyArrow
+## II. 🏛️ Arquitetura *Decoupled* e *Lean* em Microsserviços
 
-A performance e o poder analítico do TSQE residem na escolha de ferramentas de próxima geração:
+A solução é um *monorepo* de três microsserviços Python, minimalistas e desacoplados, promovendo resiliência, manutenibilidade e escalabilidade horizontal.
 
-### 1. DuckDB: O Swiss Army Knife do OLAP
+| Camada | Componente | 📦 Tecnologia Principal | 🔑 Contrato API | Função Primária e Valor Estratégico |
+| :--- | :--- | :--- | :--- | :--- |
+| **Data Producer** | 💉 **Sensor Data Injector** | `Python`, `requests`, `Faker` | **POST /ingest** | Simula a fonte de dados (IoT/Edge) e executa o *Stream UPSERT* (Update or Insert) na Engine. |
+| **Data Engine/Store** | ⚙️ **TSQE Engine Principal** | `FastAPI`, **DuckDB**, **PyArrow** | **POST /query** | O Motor central. Recebe o stream, mantém o estado em *In-Memory Table* e executa consultas SQL em modo OLAP. |
+| **Data Consumer** | 📊 **Dashboard Metrics Collector** | `FastAPI`, HTML/JS, `Pydantic` | **GET /metrics** | Orquestrador. Consulta a Engine, realiza a **Analytics Edge** (cálculo de KPIs em Python) e serve o painel Web UX. |
 
-DuckDB é um **banco de dados analítico in-process** que se integra nativamente ao Python. Suas principais vantagens nesta arquitetura são:
+### 🌐 Fluxo de Comunicação e Desacoplamento
 
-*   **OLAP Power:** Permite executar o SQL analítico complexo (`GROUP BY`, `TRY_CAST`, `JSON_EXTRACT`) diretamente sobre o stream de dados em memória, algo impraticável em bancos de dados operacionais (OLTP).
-*   **Performance In-Memory:** Utiliza o modelo de processamento vetorial (columnar) para consultas extremamente rápidas, essenciais para o requisito de baixa latência do Dashboard.
-*   **Transações de Stream (`UPSERT`):** A lógica de ingestão utiliza comandos `INSERT... ON CONFLICT DO UPDATE...` para garantir que o estado do sensor seja sempre o mais recente, tratando o *stream* como uma tabela de fatos atualizável.
+1.  **Ingestão (Stream):** O Injector envia o Lote de Dados (JSON) via **HTTP POST /ingest** (Porta 8888). O DuckDB processa o UPSERT, atualizando a tabela `real_time_stream_data`.
+2.  **Consulta (Insight):** O Dashboard envia a Query SQL (ex: Agregação de Temperatura) via **HTTP POST /query** (Porta 8888). A Engine processa e retorna o resultado em milissegundos.
 
-### 2. PyArrow: A Linguagem Universal de Dados
-
-O Apache Arrow (implementado em Python via PyArrow) é fundamental para a interoperabilidade e eficiência:
-
-*   **Ingestão Multi-Formato:** A Engine aceita dados via JSON, YAML ou até mesmo o formato Parquet (baseado em Arrow), demonstrando flexibilidade de ingestão.
-*   **Performance na Query:** O DuckDB retorna os resultados no formato `Arrow Table`. Isso permite que a Engine converta os dados para JSON de saída de forma altamente eficiente, garantindo que a serialização não se torne o gargalo de latência. O uso da `json_converter` customizada na Engine resolve o desafio comum de serializar tipos de dados (como `datetime`) do PyArrow para JSON padrão.
+Este modelo garante que a Engine (o coração da performance) não seja afetada pelas regras de negócio ou pela renderização da UI/UX.
 
 ---
 
-## IV. 📊 Lógica de Processamento no Dashboard (Consumer Side Analytics)
+## III. 🧠 O Coração da Engine: DuckDB e PyArrow — Aceleradores de Performance
 
-O serviço **Dashboard Metrics Collector** atua como um microsserviço de *Analytics Edge*, onde a lógica de negócio mais leve e específica é executada, mantendo a Engine principal focada apenas na entrega de dados brutos e rápidos.
+A escolha da Stack é o ponto-chave que posiciona esta arquitetura como **Next-Gen**.
+
+### 1. 🥇 DuckDB: A Força do OLAP In-Process
+
+*   **Processamento Colunar Vetorizado:** Ao contrário de bancos de dados OLTP linha a linha, o DuckDB utiliza vetorização nativa e armazenamento colunar em memória. Isso é crucial, pois as consultas do Dashboard são analíticas (`AVG`, `GROUP BY`, `COUNT`) – o ambiente onde o DuckDB brilha com performance superior.
+*   **Capacidade de JSON e Estrutura:** O uso de `TRY_CAST(JSON(data_payload)->>'...')` no SQL da Engine demonstra a capacidade de **consultar dados semi-estruturados** (JSON) como se fossem colunas, tudo em tempo real, sem a necessidade de um ETL complexo para normalização.
+*   **Transações de Estado (`UPSERT`):** O `INSERT INTO ... ON CONFLICT DO UPDATE` é a fundação da arquitetura **State-as-a-Table**. Garante que cada nova leitura do sensor substitua o estado anterior, mantendo a tabela sempre com o *Last Known State* de toda a frota de sensores.
+
+### 2. 🟣 PyArrow: O Formato Zênite para Interoperabilidade
+
+*   **O Formato Universal:** PyArrow implementa o Apache Arrow, o padrão *de facto* para transferência de dados colunares em memória.
+*   **Zero-Copy Serialization:** Quando o DuckDB executa a Query, ele retorna um `Arrow Table`. Esta é a representação mais eficiente de dados estruturados.
+*   **Desafio Superado (JSON Serialization):** A função `format_output_data` na Engine utiliza PyArrow, mas, crucialmente, implementa uma função `json_converter` customizada para forçar a serialização correta de objetos complexos (como `datetime` com timezone) que vêm do PyArrow, garantindo que o JSON final seja *perfeito* para o Consumer, sem *bottlenecks* de I/O. Isso demonstra proficiência em lidar com a interoperabilidade em nível de formato binário.
+
+---
+
+## IV. 📊 Lógica de Processamento: O Poder do *Analytics Edge*
+
+A Engine entrega dados brutos (`Arrow Table`), mas o microsserviço Consumer faz a agregação final – esta é a filosofia *Analytics Edge*.
 
 ### Fluxo de Geração de KPIs:
 
-1.  **Consulta SQL Eficiente:** O Consumer envia um `SELECT *` simples para obter o estado atual de *todos* os sensores na `real_time_stream_data`.
-2.  **Processamento Python:** Uma vez que os dados brutos chegam como uma lista de dicionários, o Python (FastAPI) assume a carga analítica:
-    *   **KPIs Globais:** Contagem total, contagem de alertas, e status de saúde da própria Engine (baseado na latência de consulta).
-    *   **KPIs por Entidade (Filial/Branch):** Agregação e cálculo de métricas como:
-        *   `Total de Sensores por Filial`
-        *   `Média de Temperatura` (`avg_temperature`)
-        *   `Percentual de Sensores em Alerta` (`percent_alert`)
-3.  **Visualização:** O Consumer serve uma interface HTML/CSS/JS (altamente otimizada para performance) que chama sua própria API a cada 10 segundos, atualizando dinamicamente os cartões KPI e a tabela detalhada das filiais.
+1.  **A Engine responde:** Retorna todos os 400 registros atuais de sensores em milissegundos.
+2.  **Lógica do Consumer (`fetch_and_process_metrics`):** O código Python do Dashboard itera sobre os dados:
+    *   **Agregação de Negócio:** Calcula KPIs específicos (Ex: Média de Temperatura por `store_id`, % de Alerta).
+    *   **Healthcheck Inteligente:** A Engine retorna o status de latência. O Consumer aprimora isso, definindo o status de saúde (`ONLINE`, `LAG` > 1000ms, `CRITICAL_LAG` > 3000ms) para refletir a experiência do usuário, não apenas a saúde da API.
+    *   **Regra de Alerta UI/UX:** A lógica JavaScript no frontend aplica a regra `(kpi.avg_temperature > REFRIGERATION_THRESHOLD)` para destacar linhas de filiais críticas, adicionando uma camada de visualização de negócio que é *desacoplada* da Engine.
 
-Esta separação (SQL rápido na Engine + Agregação customizada no Consumer) garante que o sistema seja **altamente customizável** e que o Dashboard possa facilmente adaptar suas métricas sem exigir alterações complexas na Engine.
+Esta arquitetura demonstra a capacidade de **dividir a carga analítica** (Heavy SQL na Engine, Light Business Logic no Consumer), otimizando a latência de ponta a ponta.
 
 ---
 
-## V. 🎯 Posicionamento Estratégico: Customização vs. Ferramentas COTS
+## V. 🎯 Posicionamento Estratégico: O Arquiteto como Otimizador de Valor
 
-Em meu papel como **Next-Gen System & Data Architect**, defendo a arquitetura *Lean* para desafios de dados específicos, conforme demonstrado por esta PoC:
+Esta PoC é um manifesto prático contra a **Fadiga Operacional** e o **Overhead de Custo** de soluções genéricas.
 
-### Por que Microsserviços Customizados Superam Ferramentas de Prateleira?
+### Por que Customização *Lean* Vence o Excesso de Ferramentas (COTS)?
 
-| Ferramenta de Prateleira (Ex: Kafka, Data Lake, DB Relacional) | Arquitetura TSQE Customizada (FastAPI + DuckDB) |
+| Cenário Genérico (Kafka/Databricks/DB Relacional) | 🛠️ Arquitetura TSQE Customizada (Elias Andrade) |
 | :--- | :--- |
-| **Overhead Operacional:** Exige clusters complexos (Kafka), ETL pipelines ou infraestrutura de armazenamento massiva. | **Lean Architecture:** Infraestrutura mínima (três aplicações Python leves). Custos operacionais e de manutenção baixíssimos. |
-| **Latência Variável:** Consulta analítica em Data Lakes pode levar segundos; Kafka é ótimo para eventos, ruim para o estado atual agregado. | **Latência Determinística:** Consultas analíticas em memória (DuckDB) garantem performance de **sub-100ms** para relatórios em tempo real. |
-| **Acoplamento:** Muitas vezes, o Consumer fica acoplado ao formato do Tópico (Kafka) ou do Schema (DB). | **Decoupled Architecture:** A Engine expõe um contrato de Query API (`/query`). Fontes e Consumidores podem ser trocados livremente, garantindo flexibilidade. |
-| **Generalista:** Ferramentas são projetadas para o uso mais amplo, resultando em funcionalidades não utilizadas. | **Otimizado para a Missão:** Cada componente é especificamente otimizado para o caso de uso (Ingestão de Upsert e Query Analítica). |
+| **Fadiga Operacional:** Exige gerenciamento de *clusters* complexos, tópicos, *brokers*, *schemas*, *connectors* e pipelines ETL. | **Eficiência Operacional:** Três serviços Python leves. A arquitetura é a própria solução, resultando em TCO (Custo Total de Propriedade) extremamente baixo. |
+| **Latência Inconsistente:** Consultas OLAP em *Data Lakes* ou DBs transacionais levam segundos ou dezenas de segundos. | **Latência Ultra-Baixa:** O uso do DuckDB *in-memory* garante que a latência de **query** seja a variável de controle, tipicamente **sub-100ms**. |
+| **Acoplamento Inflexível:** A solução é refém da sintaxe SQL, do formato de dados ou da tecnologia específica do Data Lake. | **Máximo Controle:** Componentes são plugáveis. Se a Engine precisar de um banco de dados de tempo (ex: TimescaleDB), apenas a camada de E/S na Engine é trocada. |
+| **Excesso de Capacidade:** A maior parte da infraestrutura de um *Data Lake* é subutilizada para este caso de uso simples e de alto valor. | **Otimizado para a Missão:** Arquitetura *just-in-time* e *fit-for-purpose*, entregando o resultado de negócio com a mínima infraestrutura possível. |
 
-Esta PoC é uma evidência prática da minha capacidade de projetar **soluções de dados robustas, customizáveis e sob controle total**, que entregam valor de negócio com a máxima eficiência técnica.
+**Meu Perfil:** Minha experiência como **Next-Gen System & Data Architect** reside em fazer escolhas de tecnologia que maximizem o valor de negócio através da eficiência técnica e da redução de complexidade.
 
 ---
 
-## VI. 🛠️ Stack Tecnológica (Resumo)
+## VI. 🛠️ Stack Tecnológica (Resumo e Justificativa)
 
 | Categoria | Tecnologia | Justificativa |
 | :--- | :--- | :--- |
-| **API & Service Layer** | Python 3.11+, FastAPI, Uvicorn | Framework moderno, assíncrono e de alta performance para construir APIs de microsserviços. |
-| **Data Processing Core**| DuckDB (in-memory) | Banco de dados analítico in-process para consultas rápidas e manipulação eficiente de dados vetoriais. |
-| **Data Interoperability**| PyArrow, Parquet, JSON | Padronização do formato de dados para transferência de alta velocidade entre serviços Python. |
-| **Simulação/Testing** | `Faker`, `requests` | Geração de dados simulados realistas para provar a capacidade de ingestão contínua. |
-| **Web UI** | HTML5, CSS3, Vanilla JS | Interface leve e auto-refreshing para demonstrar o consumo de dados em tempo real. |
+| **API & Service Layer** | 🐍 **Python 3.11+, FastAPI, Uvicorn** | Alta velocidade, assíncrono e padrão da indústria para microsserviços modernos. |
+| **Data Processing Core**| 🥇 **DuckDB (in-memory)** | A escolha estratégica para performance OLAP e vetorização de dados. Acelerador analítico. |
+| **Data Interoperability**| 🟣 **PyArrow, Parquet, JSON** | Garante que o gargalo não seja a serialização de dados, mas sim a execução da query. |
+| **Stream Transaction** | `requests`, `INSERT ON CONFLICT` | Implementação do *Stream UPSERT* para manter o estado da realidade atualizado. |
+| **UI/UX Layer** | **HTML5/JS (Vanilla)** | Leve, auto-refreshing, prova de conceito de consumo em tempo real com lógica *Edge*. |
 
 ---
 
-## VII. ⚙️ Como Executar a PoC (Setup Simplificado)
+## VII. ⚙️ Próximos Passos & Setup Rápido
 
-Para replicar esta arquitetura:
+Para iniciar a replicação deste ambiente de dados de alta performance:
 
-1.  Clone o repositório.
-2.  Instale as dependências: `pip install fastapi uvicorn duckdb pyarrow requests pydantic faker starlette pyyaml`
-3.  Inicie os três microsserviços em terminais separados:
-    *   **Engine (Porta 8888):** (Executar o arquivo Server Engine)
-    *   **Dashboard (Porta 8080):** (Executar o arquivo Consumer Dashboard)
-    *   **Injector:** (Executar o arquivo Data Injector)
-4.  Acesse o Dashboard em `http://127.0.0.1:8080/` e observe as métricas globais e por filial atualizando a cada 10 segundos, provando a baixa latência da Engine.
+1.  **Instalação:** Use o `requirements.txt` fornecido: `pip install -r requirements.txt`
+2.  **Execução (3 Terminais):**
+    *   **Engine (TSQE):** Inicia o motor de processamento (Porta 8888).
+    *   **Dashboard (Consumer):** Inicia a API de métricas e a UI (Porta 8080).
+    *   **Injector (Producer):** Inicia o fluxo de dados em **UPSERT** a cada 10 segundos.
+3.  **Acesso:** Navegue até `http://127.0.0.1:8080/` para ver as métricas atualizarem dinamicamente.
 
 ---
 
-## 👨‍💻 Contato
+## 👨‍💻 Contato: Elias Andrade
 
-Este projeto é um exemplo de minhas habilidades em projetar e implementar arquiteturas de dados de ponta.
+Construção de arquiteturas de dados resilientes, customizadas e de alto impacto é a minha especialidade.
 
 **Elias Andrade**
 *   **Título:** Next-Gen System & Data Architect
