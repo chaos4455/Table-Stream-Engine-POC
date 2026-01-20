@@ -27,6 +27,7 @@ O resultado é a capacidade de executar **consultas OLAP complexas (Analytical Q
 
 **Caso de Uso Central (PoC):** Monitoramento de *Freezers* em Supermercados. O sistema garante que qualquer analista possa consultar o status de Alerta, a Média de Temperatura e o Total de Sensores por Filial em **tempo real** usando apenas SQL via API.
 
+---
 graph TD
     subgraph Data Producer 💉
         A[🌡️ Injector (Simulador)] -- POST /ingest (JSON/Multi-Formato) --> B
