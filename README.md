@@ -27,6 +27,9 @@ O resultado é a capacidade de executar **consultas OLAP complexas (Analytical Q
 
 **Caso de Uso Central (PoC):** Monitoramento de *Freezers* em Supermercados. O sistema garante que qualquer analista possa consultar o status de Alerta, a Média de Temperatura e o Total de Sensores por Filial em **tempo real** usando apenas SQL via API.
 
+<img width="1366" height="796" alt="screencapture-127-0-0-1-8080-2026-01-19-17_50_34" src="https://github.com/user-attachments/assets/c61d6bc3-0475-45eb-8173-5569e2e2e94f" />
+
+
 ## II. 🏛️ Arquitetura *Decoupled* e *Lean* em Microsserviços
 
 A solução é um *monorepo* de três microsserviços Python, minimalistas e desacoplados, promovendo resiliência, manutenibilidade e escalabilidade horizontal.
