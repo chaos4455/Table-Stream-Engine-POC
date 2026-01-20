@@ -10,13 +10,8 @@
 [![PyArrow Format](https://img.shields.io/badge/Format%20Interop-PyArrow%2FParquet-C29CF5?style=for-the-badge&logo=apache-arrow&logoColor=FFFFFF&labelColor=5A3EBE)](https://arrow.apache.org/)
 [![Architecture Type](https://img.shields.io/badge/Architecture-Decoupled%20Microservices-5A3EBE?style=for-the-badge&logo=microservices&logoColor=white)](https://www.fastapi.tiangolo.com/)
 
-<br>
+<img width="1536" height="1024" alt="ChatGPT Image 20 de jan  de 2026, 11_12_57" src="https://github.com/user-attachments/assets/18126dbc-310d-4ebb-97fa-4a7a75334658" />
 
-<p align="center">
-    <img src="placeholder_image_arquitetura.png" alt="Diagrama de Arquitetura TSQE" width="90%">
-    <br>
-    <i>Representação Visual da Arquitetura TSQE: Ingestão (Azul/Roxo) ➡️ Processamento (Ouro/Amarelo) ➡️ Consumo (Verde/Ciano)</i>
-</p>
 
 ---
 
