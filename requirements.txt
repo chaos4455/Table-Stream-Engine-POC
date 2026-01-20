@@ -1,0 +1,24 @@
+# requirements.txt
+# Dependências necessárias para a execução da Table Stream Query Engine (TSQE),
+# do Dashboard Collector e do Sensor Data Injector.
+
+# --- Framework Web e Servidor ---
+fastapi
+uvicorn
+
+# --- Data Validation e Modelagem ---
+pydantic
+
+# --- Comunicação HTTP ---
+requests
+
+# --- Motor de Banco de Dados e Processamento Colunar ---
+duckdb
+pyarrow
+
+# --- Serialização/Desserialização (Usado pelo TSQE) ---
+# Necessário para o suporte a formatos YAML na Engine
+PyYAML
+
+# --- Simulação de Dados (Usado pelo Injector) ---
+Faker
