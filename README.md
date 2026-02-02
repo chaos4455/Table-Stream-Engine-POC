@@ -1,4 +1,4 @@
-# 🚀 Table Stream Query Engine (TSQE) PoC: Arquitetura de Dados de Próxima Geração
+# 🚀 Table Stream Query Engine (TSQE) PoC: Arquitetura de Dados de Próxima Geração 
 
 ## Por Elias Andrade | Next-Gen System & Data Architect
 
